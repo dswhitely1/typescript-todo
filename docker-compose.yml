@@ -10,8 +10,6 @@ services:
       - POSTGRES_DB=tasks
     volumes:
       - ./postgres:/var/lib/postgresql/data
-    ports:
-      - '5432:5432'
 
   api:
     container_name: api
@@ -22,7 +20,22 @@ services:
       - DATABASE_URL=postgresql://admin:admin@database:5432/tasks
       - JWT_SECRET=yabbadabba
       - JWT_EXPIRES_IN=1d
-    ports:
-      - '3000:3000'
     depends_on:
       - database
+
+  client:
+    container_name: client
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+
+  nginx:
+    container_name: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - '8080:80'
+    depends_on:
+      - client
+      - api
