@@ -1,6 +1,6 @@
 import { RequestWithUser } from '../../utils';
 import { Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../store';
 
 export const deleteTasks = async (req: RequestWithUser, res: Response) => {
   const ids = req.query.id;
@@ -11,7 +11,6 @@ export const deleteTasks = async (req: RequestWithUser, res: Response) => {
   if (tasksToDelete.length === 0) {
     return res.status(400).json({ message: 'No Tasks to delete' });
   }
-  const prisma = new PrismaClient();
   try {
     const response = await prisma.task.deleteMany({
       where: {
@@ -23,7 +22,5 @@ export const deleteTasks = async (req: RequestWithUser, res: Response) => {
     res.status(204).json(response);
   } catch (error) {
     res.status(500).json(error);
-  } finally {
-    await prisma.$disconnect();
   }
 };

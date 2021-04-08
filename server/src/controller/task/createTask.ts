@@ -1,9 +1,8 @@
 import { RequestWithUser } from '../../utils';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../store';
 import { Response } from 'express';
 
 export const createTask = async (req: RequestWithUser, res: Response) => {
-  const prisma = new PrismaClient();
   try {
     const newTask = await prisma.task.create({
       data: { ...req.body, userId: req.user.id },
@@ -11,7 +10,5 @@ export const createTask = async (req: RequestWithUser, res: Response) => {
     res.status(201).json(newTask);
   } catch (error) {
     res.status(500).json(error);
-  } finally {
-    await prisma.$disconnect();
   }
 };

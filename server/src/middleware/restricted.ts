@@ -1,5 +1,5 @@
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../store';
 
 const { JWT_SECRET = `Shh, I'm a secret` } = process.env;
 const options = {
@@ -8,7 +8,6 @@ const options = {
 };
 
 export const restricted = new JwtStrategy(options, (jwt_payload, done) => {
-  const prisma = new PrismaClient();
   prisma.user
     .findUnique({
       where: { id: jwt_payload.sub },
@@ -22,5 +21,4 @@ export const restricted = new JwtStrategy(options, (jwt_payload, done) => {
       }
     })
     .catch((error) => done(error, false))
-    .finally(() => prisma.$disconnect());
 });
