@@ -1,8 +1,14 @@
 import React from 'react';
 import { useForm } from '../hooks/useForm';
 import { Form, Button } from 'semantic-ui-react';
-import { start, createTaskSuccess, toggleForm } from '../store/tasks/taskSlice';
-import { useAppDispatch } from '../hooks/useRedux';
+import {
+  start,
+  createTaskSuccess,
+  toggleForm,
+  failure,
+} from '../store/tasks/taskSlice';
+import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
+import axios from 'axios';
 
 interface ITaskFormValues {
   title: string;
@@ -11,6 +17,7 @@ interface ITaskFormValues {
 
 export const TaskForm = () => {
   const dispatch = useAppDispatch();
+  const { token } = useAppSelector((state) => state.auth);
   const {
     values,
     handleChange,
@@ -18,13 +25,12 @@ export const TaskForm = () => {
     handleReset,
   } = useForm<ITaskFormValues>({ title: '', description: '' }, () => {
     dispatch(start());
-    const newTask = {
-      ...values,
-      id: Math.floor(Math.random() * 1000) + 1,
-      completed: false,
-      userId: 1,
-    };
-    dispatch(createTaskSuccess(newTask));
+    axios
+      .post('/api/tasks', values, {
+        headers: { authorization: `Bearer ${token}` },
+      })
+      .then((res) => dispatch(createTaskSuccess(res.data)))
+      .catch((error) => dispatch(failure(error)));
     handleReset();
     dispatch(toggleForm());
   });

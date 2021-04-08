@@ -16,6 +16,7 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
+    command: node --trace-warnings -r dotenv/config dist/index.js
     environment:
       - DATABASE_URL=postgresql://admin:admin@database:5432/tasks
       - JWT_SECRET=yabbadabba
@@ -28,6 +29,9 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile.dev
+    volumes:
+      - /usr/src/app/node_modules
+      - ./client:/usr/src/app
 
   nginx:
     container_name: nginx

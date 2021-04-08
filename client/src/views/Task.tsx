@@ -1,11 +1,26 @@
-import React from 'react';
-import { useAppSelector } from '../hooks/useRedux';
+import React, { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
 import { Grid, Container } from 'semantic-ui-react';
 import TaskForm from '../components/TaskForm';
 import TaskList from '../components/TaskList';
+import { getTasksSuccess, start, failure } from '../store/tasks/taskSlice';
+import axios from 'axios';
 
 export const Task = () => {
-  const { tasks, showForm } = useAppSelector((state) => state.tasks);
+  const dispatch = useAppDispatch();
+  const {
+    tasks: { tasks, showForm },
+    auth: { token },
+  } = useAppSelector((state) => state);
+
+  useEffect(() => {
+    dispatch(start());
+    axios
+      .get('/api/tasks', { headers: { authorization: `Bearer ${token}` } })
+      .then((res) => dispatch(getTasksSuccess(res.data)))
+      .catch((error) => dispatch(failure(error)));
+  }, []);
+
   return (
     <Container>
       <Grid>

@@ -1,6 +1,9 @@
 import React from 'react';
 import { useForm } from '../hooks/useForm';
-import { Container, Grid, Form, Button } from 'semantic-ui-react';
+import { Container, Form, Button } from 'semantic-ui-react';
+import { useAppDispatch } from '../hooks/useRedux';
+import { start, success, failure } from '../store/auth/authSlice';
+import axios from 'axios';
 
 interface ILoginForm {
   username: string;
@@ -8,9 +11,19 @@ interface ILoginForm {
 }
 
 export const Login = () => {
+  const dispatch = useAppDispatch();
   const { values, handleChange, handleSubmit } = useForm<ILoginForm>(
     { username: '', password: '' },
-    () => console.log(values)
+    () => {
+      dispatch(start());
+      const authToken = btoa(`${values.username}:${values.password}`);
+      axios
+        .get('/api/auth/login', {
+          headers: { authorization: `Basic ${authToken}` },
+        })
+        .then((res) => dispatch(success(res.data.token)))
+        .catch((error) => dispatch(failure(error)));
+    }
   );
 
   return (

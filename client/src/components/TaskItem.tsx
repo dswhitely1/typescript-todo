@@ -1,8 +1,9 @@
 import React from 'react';
 import { ITask } from './TaskList';
 import { Button, Segment } from 'semantic-ui-react';
-import { start, changeTaskStatus } from '../store/tasks/taskSlice';
-import { useAppDispatch } from '../hooks/useRedux';
+import { start, updateTaskSuccess, failure } from '../store/tasks/taskSlice';
+import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
+import axios from 'axios';
 
 interface ITaskItemProps {
   task: ITask;
@@ -12,10 +13,17 @@ export const TaskItem = ({
   task: { title, description, completed, id },
 }: ITaskItemProps) => {
   const dispatch = useAppDispatch();
-
+  const { token } = useAppSelector((state) => state.auth);
   const changeTaskState = (id: number) => {
     dispatch(start());
-    dispatch(changeTaskStatus(id));
+    axios
+      .put(
+        `/api/tasks/${id}`,
+        { completed: !completed },
+        { headers: { authorization: `Bearer ${token}` } }
+      )
+      .then((res) => dispatch(updateTaskSuccess(res.data)))
+      .catch((error) => dispatch(failure(error)));
   };
 
   return (

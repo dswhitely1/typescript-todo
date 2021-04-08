@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Segment, Button } from 'semantic-ui-react';
 import TaskSection from './TaskSection';
-import { start, deleteTaskSuccess } from '../store/tasks/taskSlice';
-import { useAppDispatch } from '../hooks/useRedux';
+import { start, deleteTaskSuccess, failure } from '../store/tasks/taskSlice';
+import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
+import axios from 'axios';
 
 export interface ITask {
   id: number;
@@ -18,6 +19,7 @@ interface ITaskListProps {
 
 export const TaskList = ({ tasks }: ITaskListProps) => {
   const dispatch = useAppDispatch();
+  const { token } = useAppSelector(state => state.auth)
   const [taskList, setTaskList] = useState<{
     active: ITask[];
     completed: ITask[];
@@ -36,7 +38,10 @@ export const TaskList = ({ tasks }: ITaskListProps) => {
   const clearCompleted = () => {
     const clearIds = taskList.completed.map(({ id }) => id);
     dispatch(start());
-    dispatch(deleteTaskSuccess(clearIds));
+    axios.delete(`/api/tasks?id=${clearIds.join(',')}`, {headers: {authorization: `Bearer ${token}`}}).then(res => {
+      console.log(res);
+      dispatch(deleteTaskSuccess(clearIds));
+    }).catch(error => dispatch(failure(error)))
   };
 
   return (

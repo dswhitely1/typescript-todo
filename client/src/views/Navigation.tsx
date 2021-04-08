@@ -2,7 +2,7 @@ import React from 'react';
 import { Menu, Container, Button } from 'semantic-ui-react';
 import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
 import { toggleForm } from '../store/tasks/taskSlice';
-import { toggleRegister } from '../store/auth/authSlice';
+import { toggleRegister, logout } from '../store/auth/authSlice';
 
 export const Navigation = () => {
   const dispatch = useAppDispatch();
@@ -27,7 +27,12 @@ export const Navigation = () => {
           )}
           {token ? (
             <Menu.Item>
-              <Button inverted positive content="Sign OUt" />
+              <Button
+                inverted
+                positive
+                content="Sign Out"
+                onClick={() => dispatch(logout())}
+              />
             </Menu.Item>
           ) : (
             <Menu.Item>

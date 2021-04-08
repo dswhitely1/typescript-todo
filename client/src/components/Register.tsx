@@ -1,6 +1,9 @@
 import React from 'react';
 import { useForm } from '../hooks/useForm';
 import { Button, Container, Form } from 'semantic-ui-react';
+import { useAppDispatch } from '../hooks/useRedux';
+import { start, success, failure } from '../store/auth/authSlice';
+import axios from 'axios';
 
 interface IRegisterForm {
   username: string;
@@ -9,9 +12,16 @@ interface IRegisterForm {
 }
 
 export const Register = () => {
+  const dispatch = useAppDispatch();
   const { values, handleChange, handleSubmit } = useForm<IRegisterForm>(
     { username: '', password: '', confirmPassword: '' },
-    () => console.log(values)
+    () => {
+      dispatch(start());
+      axios
+        .post('/api/auth/register', values)
+        .then((res) => dispatch(success(res.data.token)))
+        .catch((error) => dispatch(failure(error)));
+    }
   );
 
   return (

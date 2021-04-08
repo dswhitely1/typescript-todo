@@ -35,9 +35,21 @@ const authSlice = createSlice({
     toggleRegister(state) {
       state.register = !state.register;
     },
+    logout(state) {
+      state.isLoading = false;
+      state.errors = null;
+      state.token = null;
+      state.register = false;
+    },
   },
 });
 
-export const { start, failure, success, toggleRegister } = authSlice.actions;
+export const {
+  start,
+  failure,
+  success,
+  toggleRegister,
+  logout,
+} = authSlice.actions;
 
 export default authSlice.reducer;

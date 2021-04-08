@@ -88,7 +88,7 @@ const taskSlice = createSlice({
         (task) => action.payload.indexOf(task.id) === -1
       );
     },
-    error(state, action: PayloadAction<Error>) {
+    failure(state, action: PayloadAction<Error>) {
       if (state.isLoading) state.isLoading = false;
       if (state.isSuccess) state.isSuccess = false;
       state.errors = action.payload;
@@ -101,7 +101,7 @@ const taskSlice = createSlice({
 
 export const {
   start,
-  error,
+  failure,
   createTaskSuccess,
   deleteTaskSuccess,
   getTasksSuccess,
