@@ -19,7 +19,7 @@ interface ITaskListProps {
 
 export const TaskList = ({ tasks }: ITaskListProps) => {
   const dispatch = useAppDispatch();
-  const { token } = useAppSelector(state => state.auth)
+  const { token } = useAppSelector((state) => state.auth);
   const [taskList, setTaskList] = useState<{
     active: ITask[];
     completed: ITask[];
@@ -38,10 +38,14 @@ export const TaskList = ({ tasks }: ITaskListProps) => {
   const clearCompleted = () => {
     const clearIds = taskList.completed.map(({ id }) => id);
     dispatch(start());
-    axios.delete(`/api/tasks?id=${clearIds.join(',')}`, {headers: {authorization: `Bearer ${token}`}}).then(res => {
-      console.log(res);
-      dispatch(deleteTaskSuccess(clearIds));
-    }).catch(error => dispatch(failure(error)))
+    axios
+      .delete(`/api/tasks?id=${clearIds.join(',')}`, {
+        headers: { authorization: `Bearer ${token}` },
+      })
+      .then(() => {
+        dispatch(deleteTaskSuccess(clearIds));
+      })
+      .catch((error) => dispatch(failure(error)));
   };
 
   return (

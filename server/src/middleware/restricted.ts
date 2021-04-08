@@ -20,5 +20,5 @@ export const restricted = new JwtStrategy(options, (jwt_payload, done) => {
         return done(null, false);
       }
     })
-    .catch((error) => done(error, false))
+    .catch((error) => done(error, false));
 });
