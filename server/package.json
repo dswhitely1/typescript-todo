@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "npx tsc",
     "start": "node -r dotenv/config dist/index.js",
     "dev": "npx nodemon --exec ts-node -r dotenv/config src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"

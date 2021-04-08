@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  database:
+    container_name: postgres
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=tasks
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+
+  api:
+    container_name: api
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://admin:admin@database:5432/tasks
+      - JWT_SECRET=yabbadabba
+      - JWT_EXPIRES_IN=1d
+    ports:
+      - '3000:3000'
+    depends_on:
+      - database
