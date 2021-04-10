@@ -117,3 +117,4 @@ dist
 
 .idea
 postgres
+k8s/secrets.yaml
